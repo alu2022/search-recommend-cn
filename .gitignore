@@ -1,2 +1,14 @@
 build/
 venv/
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.venv/
+data/corpus_cleaned.txt
+data/index*
+*.egg-info/
+.cmake/
+CMakeFiles/
+CMakeCache.txt
+.vscode/

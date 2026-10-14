@@ -3,6 +3,38 @@
 
 > 📚 **深度学习推荐系统 6 个月学习计划(国内方向)** 已整理在 [`学习计划/`](./学习计划/README.md) 目录下,按月按周拆解,可直接对照推进。
 
+## 当前进度（步骤 0 + 步骤 1）
+
+仓库脚手架和中文语料预处理已经可用。在项目根目录执行：
+
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+python scripts/check_env.py
+python scripts/preprocess.py --input data/corpus.txt --output data/corpus_cleaned.txt
+python -m unittest tests.test_preprocess
+```
+
+把 8 个后续步骤建成 GitHub Issue（本机需已 `gh auth login`）：
+
+```bash
+bash scripts/create_github_issues.sh
+```
+
+### 目录结构
+
+```
+data/corpus.txt                 # 示例中文语料（每行一篇）
+data/stopwords.txt              # 停用词
+data/userdict.txt               # jieba 自定义词典（保护「倒排索引」等短语）
+scripts/preprocess.py           # 分词 + 去停用词
+scripts/check_env.py            # Python / C++ / CMake / jieba 自检
+scripts/create_github_issues.sh # 创建 8 个步骤 Issue
+cpp/CMakeLists.txt              # C++ 索引器占位，步骤 2 再补 indexer
+tests/test_preprocess.py
+requirements.txt
+```
+
 ---
 
 好 — 我把整个项目的“端到端流程 + 所需环境 + 每一步可以参考的开源仓库与要看目录/文件”整理成一份可执行的清单，便于你按之前的两周计划推进。考虑到你每周的可投入时间（工作日每天 1 小时，周末较多），我在每一步给出大致耗时建议和优先参考仓库/目录。
