@@ -28,7 +28,7 @@ _PUNCTUATION = set(
     "`~@#$%^&*-_=+|\\/"
 )
 _PUNCT_RE = re.compile(r"^[\s]+$")
-_ASCII_WORD_RE = re.compile(r"^[A-Za-z0-9]+$")
+_HAS_LATIN_RE = re.compile(r"[A-Za-z]")
 
 
 def load_stopwords(path: Path | None) -> set[str]:
@@ -46,7 +46,17 @@ def load_stopwords(path: Path | None) -> set[str]:
 def load_userdict(path: Path | None) -> None:
     if path is None or not path.exists():
         return
-    jieba.load_userdict(str(path))
+    # Add words ourselves so jieba does not leave the dict file unclosed.
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split()
+            word = parts[0]
+            freq = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else None
+            tag = parts[2] if len(parts) > 2 else None
+            jieba.add_word(word, freq=freq, tag=tag)
 
 
 def is_useful_token(token: str, stopwords: set[str]) -> bool:
@@ -67,7 +77,7 @@ def tokenize_document(text: str, stopwords: set[str]) -> list[str]:
     tokens: list[str] = []
     for raw in jieba.lcut(text, cut_all=False):
         token = raw.strip()
-        if _ASCII_WORD_RE.match(token):
+        if _HAS_LATIN_RE.search(token):
             token = token.lower()
         if is_useful_token(token, stopwords):
             tokens.append(token)

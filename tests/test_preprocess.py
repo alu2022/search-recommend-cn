@@ -57,6 +57,22 @@ class PreprocessTest(unittest.TestCase):
             self.assertIn("倒排索引", text[0])
             self.assertIn("推荐系统", text[1])
 
+    def test_sample_corpus_keeps_domain_terms(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            dst = Path(tmp) / "cleaned.txt"
+            n_docs = preprocess.preprocess_file(
+                input_path=ROOT / "data" / "corpus.txt",
+                output_path=dst,
+                stopwords_path=ROOT / "data" / "stopwords.txt",
+                userdict_path=ROOT / "data" / "userdict.txt",
+            )
+            self.assertEqual(n_docs, 25)
+            text = dst.read_text(encoding="utf-8")
+            self.assertIn("倒排索引", text)
+            self.assertIn("推荐系统", text)
+            self.assertIn("bm25", text)
+            self.assertIn("tf-idf", text)
+
     def test_cli_missing_input_returns_error(self) -> None:
         code = preprocess.main(
             ["--input", "/tmp/does-not-exist-corpus.txt", "--output", "/tmp/out.txt"]
